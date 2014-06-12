@@ -1,0 +1,37 @@
+data <- read.csv("household_power_consumption.txt",skip=64800,nrows=5*24*60,sep=";",col.names=c("Date","Time","Global_active_power","Global_reactive_power","Voltage","Global_intensity","Sub_metering_1","Sub_metering_2","Sub_metering_3"))
+data <- data[data$Date=="1/2/2007" | data$Date=="2/2/2007",]
+data$Date <- as.Date(data$Date,format="%d/%m/%Y")
+data$TimeAxis <- paste(data$Date,data$Time,sep=" ")
+
+png(file="plot1.png",width=480,height=480)
+par(mfrow= c(1,1))
+hist(data$Global_active_power, main="Globe Active Power",xlab="Globe Active Power (kilowatts)",ylab="Frequency",col="red")
+dev.off()
+
+data$datetime<-as.POSIXct(paste(data$Date,data$Time))
+
+png(png,file="plot2.png",width=480,height=480)
+par(mfrow= c(1,1))
+plot(data$datetime,data$Global_active_power, type="l",xlab="",ylab="Global Active Power (kilowatts)")
+dev.off()         
+
+png(file="plot3.png",width=480,height=480)
+par(mfrow= c(1,1))
+plot(data$Sub_metering_1 ~ data$datetime, xlab= "", ylab="", type="l")
+points(data$datetime, data$Sub_metering_2,col="red",type="l")
+points(data$datetime, data$Sub_metering_3,col="blue",type="l")
+title(ylab="Energy sub metering")
+legend("topright",c("Sub_metering_1","Sub_metering_2","Sub_metering_3"),col=c("black","red","blue"),lwd=1)
+dev.off()   
+
+png(file="plot4.png",width=480,height=480)
+par(mfrow= c(2,2))
+plot(data$datetime,data$Global_active_power, type="l",xlab="",ylab="Global Active Power")
+plot(data$datetime,data$Voltage, type="l",xlab="datetime",ylab="Voltage")
+plot(data$Sub_metering_1 ~ data$datetime, xlab= "", ylab="", type="l")
+points(data$datetime, data$Sub_metering_2,col="red",type="l")
+points(data$datetime, data$Sub_metering_3,col="blue",type="l")
+title(ylab="Energy sub metering")
+legend("topright",cex=0.7,c("Sub_metering_1","Sub_metering_2","Sub_metering_3"),col=c("black","red","blue"),lwd=1)
+plot(data$datetime,data$Global_reactive_power, type="l",xlab="datetime",ylab="Voltage")
+dev.off()
